@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { HomePage } from "@/components/home-page";
 import { getHomepageData } from "@/lib/content";
 import { VALID_USERNAMES, type Username } from "@/data/users/registry";
+import { defaultLocale, locales, type Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/get-messages";
 
 type Params = { username: string };
 
@@ -18,13 +21,19 @@ export async function generateMetadata({
   const { username } = await params;
   if (!VALID_USERNAMES.includes(username as Username)) return {};
 
-  const data = getHomepageData(username);
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("NEXT_LOCALE")?.value;
+  const locale: Locale = locales.includes(raw as Locale) ? (raw as Locale) : defaultLocale;
+  const messages = await getMessages(locale);
+  const tagline = messages["meta.tagline"] ?? "Hidden Gems from a Local Friend";
+
+  const data = getHomepageData(username, locale);
   const { profile } = data;
   const ogImage = profile.mapImageUrl ?? "/images/map/seoul-map-poster.png";
   const faviconPath = `/images/people/${username}-favicon.png`;
 
   return {
-    title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
+    title: `${profile.siteTitle} — ${tagline}`,
     description: profile.subtitle,
     icons: {
       icon: faviconPath,
@@ -32,7 +41,7 @@ export async function generateMetadata({
       apple: faviconPath,
     },
     openGraph: {
-      title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
+      title: `${profile.siteTitle} — ${tagline}`,
       description: profile.subtitle,
       url: `https://triphero.club/${username}`,
       siteName: profile.siteTitle,
@@ -47,7 +56,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
+      title: `${profile.siteTitle} — ${tagline}`,
       description: profile.subtitle,
       images: [ogImage],
     },
@@ -64,6 +73,10 @@ export default async function UserPage({
     notFound();
   }
 
-  const data = getHomepageData(username);
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("NEXT_LOCALE")?.value;
+  const locale: Locale = locales.includes(raw as Locale) ? (raw as Locale) : defaultLocale;
+
+  const data = getHomepageData(username, locale);
   return <HomePage data={data} />;
 }
