@@ -5,6 +5,7 @@ export const profileBundleData: ProfileBundle = {
   subtitle: "A local Korean's handpicked hidden gems for visiting friends.",
   introNote:
     "These are the Seoul spots I'd actually take you to — soulful food, quieter hanok corners, and hidden gems that rarely show up in tourist guides. Think of this as borrowing a local friend's personal map.",
+  mapImageUrl: "/images/map/seoul-map-poster.png",
   curator: {
     name: "Mina",
     role: "Your local Seoul friend",

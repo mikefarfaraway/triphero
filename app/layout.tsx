@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   description: "Personal Seoul guides curated by locals. Discover hidden gems through a local friend's eyes.",
   applicationName: "TripHero",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/images/people/mina-favicon.png",
+    shortcut: "/images/people/mina-favicon.png",
+    apple: "/images/people/mina-favicon.png",
   },
   openGraph: {
     title: "TripHero — Seoul Guides from Local Friends",

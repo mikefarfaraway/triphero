@@ -19,6 +19,7 @@ export type ProfileBundle = {
   siteTitle: string;
   subtitle: string;
   introNote: string;
+  mapImageUrl?: string;
   guest?: PersonProfile;
   curator: PersonProfile;
 };
