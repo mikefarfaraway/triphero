@@ -1,7 +1,5 @@
-import { HomePage } from "@/components/home-page";
-import { getHomepageData } from "@/lib/content";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  const data = getHomepageData();
-  return <HomePage data={data} />;
+export default function RootPage() {
+  redirect("/mina");
 }

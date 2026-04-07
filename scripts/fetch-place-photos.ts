@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ENV_PATH = path.resolve(__dirname, "../.env.local");
-const CSV_PATH = path.resolve(__dirname, "../data/spots.csv");
+const CSV_PATH = path.resolve(__dirname, "../data/users/mina/spots.csv");
 const PHOTOS_DIR = path.resolve(__dirname, "../public/images/spots/photos");
 const MAX_WIDTH = 1200;
 

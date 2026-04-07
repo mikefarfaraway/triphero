@@ -3,29 +3,25 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://triphero.club"),
-  title: "Mina's Seoul Guide — Hidden Gems from a Local Friend",
-  description:
-    "A local Korean's handpicked hidden gems and favorite spots. Your friend Mina's personal Seoul guide.",
-  applicationName: "Mina's Seoul Edit",
-  alternates: {
-    canonical: "/",
-  },
+  title: "TripHero — Seoul Guides from Local Friends",
+  description: "Personal Seoul guides curated by locals. Discover hidden gems through a local friend's eyes.",
+  applicationName: "TripHero",
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "Mina's Seoul Guide — Hidden Gems from a Local Friend",
-    description: "A local Korean's handpicked hidden gems and favorite spots. Your friend Mina's personal Seoul guide.",
+    title: "TripHero — Seoul Guides from Local Friends",
+    description: "Personal Seoul guides curated by locals. Discover hidden gems through a local friend's eyes.",
     url: "https://triphero.club",
-    siteName: "Mina's Seoul Edit",
+    siteName: "TripHero",
     images: [
       {
         url: "/images/map/og-seoul-guide.png",
         width: 1200,
         height: 630,
-        alt: "Illustrated Seoul guide map with Mina's portrait",
+        alt: "TripHero Seoul guide preview",
       },
     ],
     locale: "en_US",
@@ -33,8 +29,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mina's Seoul Guide — Hidden Gems from a Local Friend",
-    description: "A local Korean's handpicked hidden gems and favorite spots. Your friend Mina's personal Seoul guide.",
+    title: "TripHero — Seoul Guides from Local Friends",
+    description: "Personal Seoul guides curated by locals. Discover hidden gems through a local friend's eyes.",
     images: ["/images/map/og-seoul-guide.png"],
   },
 };

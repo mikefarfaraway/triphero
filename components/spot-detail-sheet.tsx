@@ -2,14 +2,14 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect } from "react";
-import type { RelatedSpot, Spot } from "@/types/content";
+import type { PersonProfile, RelatedSpot, Spot } from "@/types/content";
 import { SpotVisual } from "@/components/spot-visual";
-import { profileBundleData } from "@/data/profile";
 import { getSubcategoryLabel } from "@/lib/spot-presentation";
 
 type SpotDetailSheetProps = {
   spot: Spot | null;
   relatedSpots: RelatedSpot[];
+  curator: PersonProfile;
   onClose: () => void;
   onSelectRelated: (spotId: string) => void;
 };
@@ -17,6 +17,7 @@ type SpotDetailSheetProps = {
 export function SpotDetailSheet({
   spot,
   relatedSpots,
+  curator,
   onClose,
   onSelectRelated,
 }: SpotDetailSheetProps) {
@@ -111,10 +112,10 @@ export function SpotDetailSheet({
                   <p className="mt-2 text-[15px] leading-7 text-white/84 italic">&quot;{spot.localInsight}&quot;</p>
                   <div className="absolute bottom-4 right-4 h-11 w-11 overflow-hidden rounded-full border border-white/15 bg-white/10 shadow-lg">
                     <img
-                      src={profileBundleData.curator.heroImage}
-                      alt={`${profileBundleData.curator.name} portrait`}
+                      src={curator.heroImage}
+                      alt={`${curator.name} portrait`}
                       className="h-full w-full object-cover"
-                      style={{ objectPosition: profileBundleData.curator.heroImagePosition }}
+                      style={{ objectPosition: curator.heroImagePosition }}
                     />
                   </div>
                 </div>

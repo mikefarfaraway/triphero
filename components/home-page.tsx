@@ -219,6 +219,7 @@ export function HomePage({ data }: HomePageProps) {
       <SpotDetailSheet
         spot={selectedSpot}
         relatedSpots={relatedSpots}
+        curator={data.profile.curator}
         onClose={() => setSelectedSpotId(null)}
         onSelectRelated={setSelectedSpotId}
       />

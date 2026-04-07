@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
-import { profileBundleData } from "@/data/profile";
+import { profileBundleData as minaProfile } from "@/data/users/mina/profile";
+import { profileBundleData as mikeProfile } from "@/data/users/mike/profile";
+import { VALID_USERNAMES, type Username } from "@/data/users/registry";
 import type {
   HomepageData,
   ProfileBundle,
@@ -61,10 +63,41 @@ const spotSchema = z.object({
   hiddenGem: z.boolean(),
 });
 
-const parsedProfile = profileBundleSchema.parse(profileBundleData) as ProfileBundle;
-const parsedSpots = z.array(spotSchema).parse(loadCsvSpots()) as Spot[];
+/* ── Per-user profiles ── */
 
-const spotMap = new Map(parsedSpots.map((spot) => [spot.id, spot]));
+const profiles: Record<Username, ProfileBundle> = {
+  mina: profileBundleSchema.parse(minaProfile) as ProfileBundle,
+  mike: profileBundleSchema.parse(mikeProfile) as ProfileBundle,
+};
+
+/* ── Per-user data cache ── */
+
+type UserContent = {
+  profile: ProfileBundle;
+  spots: Spot[];
+  spotMap: Map<string, Spot>;
+};
+
+const cache = new Map<string, UserContent>();
+
+function getUserContent(username: string): UserContent {
+  const cached = cache.get(username);
+  if (cached) return cached;
+
+  if (!VALID_USERNAMES.includes(username as Username)) {
+    throw new Error(`Unknown user: ${username}`);
+  }
+
+  const profile = profiles[username as Username];
+  const spots = z.array(spotSchema).parse(loadCsvSpots(username)) as Spot[];
+  const spotMap = new Map(spots.map((spot) => [spot.id, spot]));
+
+  const content: UserContent = { profile, spots, spotMap };
+  cache.set(username, content);
+  return content;
+}
+
+/* ── CSV parsing ── */
 
 function parseCsv(content: string) {
   const normalized = content.replace(/^\uFEFF/, "").trim();
@@ -205,8 +238,8 @@ function inferVibeTags(row: Record<string, string>) {
   return tags.slice(0, 5);
 }
 
-function loadCsvSpots(): Spot[] {
-  const filePath = path.join(process.cwd(), "data", "spots.csv");
+function loadCsvSpots(username: string): Spot[] {
+  const filePath = path.join(process.cwd(), "data", "users", username, "spots.csv");
   const csv = fs.readFileSync(filePath, "utf-8");
   const rows = parseCsv(csv);
 
@@ -290,50 +323,50 @@ function relatedScore(source: Spot, candidate: Spot) {
   return score;
 }
 
-export function validateContentGraph() {
-  const seedSpots = getMainSpots();
+/* ── Public API (all user-scoped) ── */
 
-  for (const seedSpot of seedSpots) {
-    const related = getRelatedSpots(seedSpot.id);
+export function validateContentGraph(username: string) {
+  const mainSpots = getMainSpots(username);
+
+  for (const spot of mainSpots) {
+    const related = getRelatedSpots(username, spot.id);
     if (related.length === 0) {
-      throw new Error(`Seed spot "${seedSpot.id}" has no related recommendations.`);
+      throw new Error(`Seed spot "${spot.id}" has no related recommendations.`);
     }
   }
 }
 
-validateContentGraph();
-
-export function getProfileBundle() {
-  return parsedProfile;
+export function getProfileBundle(username: string) {
+  return getUserContent(username).profile;
 }
 
-export function getAllSpots() {
-  return sortByEditorialPriority(parsedSpots);
+export function getAllSpots(username: string) {
+  return sortByEditorialPriority(getUserContent(username).spots);
 }
 
-export function getMainSpots() {
-  return sortByEditorialPriority(parsedSpots.filter((spot) => spot.type === "main"));
+export function getMainSpots(username: string) {
+  return sortByEditorialPriority(getUserContent(username).spots.filter((spot) => spot.type === "main"));
 }
 
-export function getFeaturedSpots() {
-  return getMainSpots().slice(0, 12);
+export function getFeaturedSpots(username: string) {
+  return getMainSpots(username).slice(0, 12);
 }
 
-export function getHiddenGems() {
-  return sortByEditorialPriority(parsedSpots.filter((spot) => spot.type === "hidden_gem"));
+export function getHiddenGems(username: string) {
+  return sortByEditorialPriority(getUserContent(username).spots.filter((spot) => spot.type === "hidden_gem"));
 }
 
-export function getSpotById(id: string) {
-  return spotMap.get(id) ?? null;
+export function getSpotById(username: string, id: string) {
+  return getUserContent(username).spotMap.get(id) ?? null;
 }
 
-export function getRelatedSpots(id: string): RelatedSpot[] {
-  const source = getSpotById(id);
+export function getRelatedSpots(username: string, id: string): RelatedSpot[] {
+  const source = getSpotById(username, id);
   if (!source) {
     return [];
   }
 
-  return getAllSpots()
+  return getAllSpots(username)
     .filter((candidate) => candidate.id !== source.id)
     .sort((a, b) => relatedScore(source, b) - relatedScore(source, a))
     .slice(0, 3)
@@ -343,14 +376,14 @@ export function getRelatedSpots(id: string): RelatedSpot[] {
     }));
 }
 
-export function getRelatedBySpotId() {
-  return Object.fromEntries(parsedSpots.map((spot) => [spot.id, getRelatedSpots(spot.id)]));
+export function getRelatedBySpotId(username: string) {
+  return Object.fromEntries(getUserContent(username).spots.map((spot) => [spot.id, getRelatedSpots(username, spot.id)]));
 }
 
-export function getNeighborhoodSummary() {
+export function getNeighborhoodSummary(username: string) {
   const counts = new Map<string, number>();
 
-  for (const spot of getMainSpots()) {
+  for (const spot of getMainSpots(username)) {
     counts.set(spot.neighborhood, (counts.get(spot.neighborhood) ?? 0) + 1);
   }
 
@@ -359,14 +392,14 @@ export function getNeighborhoodSummary() {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
-export function getHomepageData(): HomepageData {
+export function getHomepageData(username: string): HomepageData {
   return {
-    profile: getProfileBundle(),
-    featuredSpots: getFeaturedSpots(),
-    mainSpots: getMainSpots(),
-    hiddenGems: getHiddenGems(),
-    allSpots: getAllSpots(),
-    relatedBySpotId: getRelatedBySpotId(),
-    neighborhoods: getNeighborhoodSummary(),
+    profile: getProfileBundle(username),
+    featuredSpots: getFeaturedSpots(username),
+    mainSpots: getMainSpots(username),
+    hiddenGems: getHiddenGems(username),
+    allSpots: getAllSpots(username),
+    relatedBySpotId: getRelatedBySpotId(username),
+    neighborhoods: getNeighborhoodSummary(username),
   };
 }
