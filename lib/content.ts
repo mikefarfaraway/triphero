@@ -30,6 +30,7 @@ const profileBundleSchema = z.object({
   siteTitle: z.string(),
   subtitle: z.string(),
   introNote: z.string(),
+  mapImageUrl: z.string().optional(),
   guest: personProfileSchema.optional(),
   curator: personProfileSchema,
 });

@@ -20,14 +20,36 @@ export async function generateMetadata({
 
   const data = getHomepageData(username);
   const { profile } = data;
+  const ogImage = profile.mapImageUrl ?? "/images/map/seoul-map-poster.png";
+  const faviconPath = `/images/people/${username}-favicon.png`;
 
   return {
     title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
     description: profile.subtitle,
+    icons: {
+      icon: faviconPath,
+      shortcut: faviconPath,
+      apple: faviconPath,
+    },
     openGraph: {
       title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
       description: profile.subtitle,
+      url: `https://triphero.club/${username}`,
       siteName: profile.siteTitle,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 800,
+          alt: `${profile.curator.name}'s Seoul guide map preview`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${profile.siteTitle} — Hidden Gems from a Local Friend`,
+      description: profile.subtitle,
+      images: [ogImage],
     },
   };
 }

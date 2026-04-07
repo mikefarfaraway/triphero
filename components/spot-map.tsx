@@ -5,12 +5,13 @@ import type { Spot } from "@/types/content";
 
 type SpotMapProps = {
   spots: Spot[];
+  mapImageUrl?: string;
 };
 
 export const MY_MAPS_PUBLIC_URL =
   "https://www.google.com/maps/d/u/0/edit?mid=1Ile6fS2J4iviMrr4EZyDchZsljE81sw&usp=sharing";
 
-export function SpotMap({ spots }: SpotMapProps) {
+export function SpotMap({ spots, mapImageUrl = "/images/map/seoul-map-poster.png" }: SpotMapProps) {
   return (
     <a
       href={MY_MAPS_PUBLIC_URL}
@@ -24,9 +25,9 @@ export function SpotMap({ spots }: SpotMapProps) {
       </div>
       <div className="relative mt-3">
         <img
-          src="/images/map/seoul-map-poster.png"
+          src={mapImageUrl}
           alt="Seoul map preview"
-          className="w-full"
+          className="mx-auto w-full max-w-[600px] object-contain"
         />
         <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-[#18212B] px-4 py-2 text-sm font-medium text-white shadow-lg md:bottom-5 md:right-5 md:px-5 md:py-3 md:text-base">
           <span>Open in Google Maps</span>

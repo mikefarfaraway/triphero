@@ -115,7 +115,7 @@ export function HomePage({ data }: HomePageProps) {
 
       <section ref={mapSectionRef} className="px-4 pt-6 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <SpotMap spots={filteredSpots} />
+          <SpotMap spots={filteredSpots} mapImageUrl={data.profile.mapImageUrl} />
         </div>
       </section>
 
