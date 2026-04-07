@@ -1,15 +1,16 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { SpotDetailSheet } from "@/components/spot-detail-sheet";
 import { sampleProfile, sampleRelatedSpot, sampleSpot } from "@/tests/fixtures";
+import { renderWithI18n } from "@/tests/test-utils";
 
 describe("SpotDetailSheet", () => {
   it("renders long-form details and related spots without requiring optional coordinates", () => {
     const onClose = vi.fn();
     const onSelectRelated = vi.fn();
 
-    render(
+    renderWithI18n(
       <SpotDetailSheet
         spot={sampleSpot}
         relatedSpots={[sampleRelatedSpot]}
