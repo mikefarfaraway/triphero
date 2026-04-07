@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import type { Spot } from "@/types/content";
 import { getSpotPalette, getSubcategoryEmoji } from "@/lib/spot-presentation";
+import { useT } from "@/lib/i18n/context";
 
 type SpotCardProps = {
   spot: Spot;
@@ -13,6 +14,7 @@ type SpotCardProps = {
 };
 
 export function SpotCard({ spot, onSelect, index, variant = "main" }: SpotCardProps) {
+  const { t } = useT();
   const palette = getSpotPalette(spot);
 
   return (
@@ -27,13 +29,13 @@ export function SpotCard({ spot, onSelect, index, variant = "main" }: SpotCardPr
       <div className="flex h-full flex-col p-5">
         <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-black/45">
           <span>{spot.neighborhood}</span>
-          <span>{spot.hiddenGem ? "Hidden gem" : spot.priceLevel}</span>
+          <span>{spot.hiddenGem ? t("spot.hiddenGem") : spot.priceLevel}</span>
         </div>
 
         <div className="mt-4 grid grid-cols-[minmax(0,1fr)_96px] items-start gap-4 rounded-[24px] border border-black/10 bg-white/75 p-4">
           <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.22em] text-black/40">
-              {spot.category} {getSubcategoryEmoji(spot.subcategory)}
+              {t(`cat.${spot.category}`)} {getSubcategoryEmoji(spot.subcategory)}
             </p>
             <h2 className="display-font mt-3 text-[30px] leading-[0.95] tracking-[-0.04em] [overflow-wrap:anywhere]">
               {spot.name}
@@ -67,14 +69,14 @@ export function SpotCard({ spot, onSelect, index, variant = "main" }: SpotCardPr
                   : "border-black/10 bg-white/70 text-black/60"
               }`}
             >
-              {tag}
+              {t(tag)}
             </span>
           ))}
         </div>
 
         <div className="mt-auto pt-5 text-sm font-medium text-black/60">
           <span>
-            {spot.district} · {spot.bestTime}
+            {spot.district} · {t(spot.bestTime)}
           </span>
         </div>
       </div>

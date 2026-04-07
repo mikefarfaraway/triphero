@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
-import { profileBundleData as minaProfile } from "@/data/users/mina/profile";
-import { profileBundleData as mikeProfile } from "@/data/users/mike/profile";
+import { profileBundleData as minaProfile, profileTranslations as minaTranslations } from "@/data/users/mina/profile";
+import { profileBundleData as mikeProfile, profileTranslations as mikeTranslations } from "@/data/users/mike/profile";
 import { VALID_USERNAMES, type Username } from "@/data/users/registry";
 import type {
   HomepageData,
@@ -70,6 +70,30 @@ const profiles: Record<Username, ProfileBundle> = {
   mina: profileBundleSchema.parse(minaProfile) as ProfileBundle,
   mike: profileBundleSchema.parse(mikeProfile) as ProfileBundle,
 };
+
+const translations: Record<Username, Record<string, Record<string, unknown>>> = {
+  mina: minaTranslations,
+  mike: mikeTranslations,
+};
+
+function getLocalizedProfile(username: Username, locale?: string): ProfileBundle {
+  const base = profiles[username];
+  if (!locale || locale === "en") return base;
+
+  const t = translations[username]?.[locale];
+  if (!t) return base;
+
+  return {
+    ...base,
+    ...(t.siteTitle ? { siteTitle: t.siteTitle as string } : {}),
+    ...(t.subtitle ? { subtitle: t.subtitle as string } : {}),
+    ...(t.introNote ? { introNote: t.introNote as string } : {}),
+    curator: {
+      ...base.curator,
+      ...((t.curator as Partial<ProfileBundle["curator"]>) ?? {}),
+    },
+  };
+}
 
 /* ── Per-user data cache ── */
 
@@ -184,36 +208,34 @@ function inferBestTime(category: string, subcategory: string, neighborhood: stri
   const neighborhoodKey = neighborhood.toLowerCase();
 
   if (category === "Bar") {
-    return "After dinner";
+    return "bestTime.afterDinner";
   }
 
   if (/cafe|bakery|coffee/.test(haystack)) {
-    return "Late morning to sunset";
+    return "bestTime.lateMorningToSunset";
   }
 
   if (/porridge|soup|samgyetang/.test(haystack)) {
-    return "Lunch";
+    return "bestTime.lunch";
   }
 
   if (/bbq|jok bal/.test(haystack)) {
-    return "Dinner";
+    return "bestTime.dinner";
   }
 
   if (["bukchon", "anguk", "seochon", "buam-dong"].includes(neighborhoodKey)) {
-    return "Late afternoon";
+    return "bestTime.lateAfternoon";
   }
 
-  return "Lunch to dinner";
+  return "bestTime.lunchToDinner";
 }
 
 function inferVibeTags(row: Record<string, string>) {
   const source = `${row.category} ${row.subcategory} ${row.reason} ${row.neighborhood}`.toLowerCase();
   const tags = [
-    row.category.toLowerCase(),
-    row.subcategory.toLowerCase().replace(/[^a-z0-9가-힣 ]+/g, " ").replace(/\s+/g, " ").trim(),
-    row.neighborhood.toLowerCase(),
-    row.district.toLowerCase(),
-    row.type === "hidden_gem" ? "hidden gem" : "local favorite",
+    `cat.${row.category}`,
+    row.neighborhood,
+    row.type === "hidden_gem" ? "tag.hidden gem" : "tag.local favorite",
   ];
 
   for (const extra of [
@@ -231,8 +253,8 @@ function inferVibeTags(row: Record<string, string>) {
     "rooftop",
     "cocktail",
   ]) {
-    if (source.includes(extra) && !tags.includes(extra)) {
-      tags.push(extra);
+    if (source.includes(extra) && !tags.includes(`tag.${extra}`)) {
+      tags.push(`tag.${extra}`);
     }
   }
 
@@ -324,6 +346,61 @@ function relatedScore(source: Spot, candidate: Spot) {
   return score;
 }
 
+/* ── Spot translations ── */
+
+type SpotTranslation = { subcategory?: string; reason?: string };
+type SpotTranslationMap = Record<string, SpotTranslation>;
+
+const spotTranslationCache = new Map<string, SpotTranslationMap>();
+
+function loadSpotTranslations(locale: string): SpotTranslationMap {
+  if (locale === "en") return {};
+  const cached = spotTranslationCache.get(locale);
+  if (cached) return cached;
+
+  const filePath = path.join(process.cwd(), "data", "spot-translations", `${locale}.json`);
+  try {
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(raw) as SpotTranslationMap;
+    spotTranslationCache.set(locale, data);
+    return data;
+  } catch {
+    return {};
+  }
+}
+
+function translateSpot(spot: Spot, translations: SpotTranslationMap): Spot {
+  const t = translations[spot.id];
+  if (!t) return spot;
+  return {
+    ...spot,
+    ...(t.subcategory ? { subcategory: t.subcategory } : {}),
+    ...(t.reason ? { shortPitch: t.reason, description: t.reason, localInsight: t.reason } : {}),
+  };
+}
+
+function translateSpots(spots: Spot[], locale?: string): Spot[] {
+  if (!locale || locale === "en") return spots;
+  const translations = loadSpotTranslations(locale);
+  if (Object.keys(translations).length === 0) return spots;
+  return spots.map((spot) => translateSpot(spot, translations));
+}
+
+function translateRelatedSpots(relatedBySpotId: Record<string, RelatedSpot[]>, locale?: string): Record<string, RelatedSpot[]> {
+  if (!locale || locale === "en") return relatedBySpotId;
+  const translations = loadSpotTranslations(locale);
+  if (Object.keys(translations).length === 0) return relatedBySpotId;
+  return Object.fromEntries(
+    Object.entries(relatedBySpotId).map(([id, spots]) => [
+      id,
+      spots.map((spot) => {
+        const translated = translateSpot(spot, translations);
+        return { ...translated, reason: spot.reason };
+      }),
+    ]),
+  );
+}
+
 /* ── Public API (all user-scoped) ── */
 
 export function validateContentGraph(username: string) {
@@ -337,7 +414,10 @@ export function validateContentGraph(username: string) {
   }
 }
 
-export function getProfileBundle(username: string) {
+export function getProfileBundle(username: string, locale?: string) {
+  if (locale && locale !== "en") {
+    return getLocalizedProfile(username as Username, locale);
+  }
   return getUserContent(username).profile;
 }
 
@@ -393,14 +473,14 @@ export function getNeighborhoodSummary(username: string) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
-export function getHomepageData(username: string): HomepageData {
+export function getHomepageData(username: string, locale?: string): HomepageData {
   return {
-    profile: getProfileBundle(username),
-    featuredSpots: getFeaturedSpots(username),
-    mainSpots: getMainSpots(username),
-    hiddenGems: getHiddenGems(username),
-    allSpots: getAllSpots(username),
-    relatedBySpotId: getRelatedBySpotId(username),
+    profile: getProfileBundle(username, locale),
+    featuredSpots: translateSpots(getFeaturedSpots(username), locale),
+    mainSpots: translateSpots(getMainSpots(username), locale),
+    hiddenGems: translateSpots(getHiddenGems(username), locale),
+    allSpots: translateSpots(getAllSpots(username), locale),
+    relatedBySpotId: translateRelatedSpots(getRelatedBySpotId(username), locale),
     neighborhoods: getNeighborhoodSummary(username),
   };
 }

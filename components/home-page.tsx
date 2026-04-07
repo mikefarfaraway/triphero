@@ -7,12 +7,14 @@ import { Hero } from "@/components/hero";
 import { MY_MAPS_PUBLIC_URL, SpotMap } from "@/components/spot-map";
 import { SpotCard } from "@/components/spot-card";
 import { SpotDetailSheet } from "@/components/spot-detail-sheet";
+import { useT } from "@/lib/i18n/context";
 
 type HomePageProps = {
   data: HomepageData;
 };
 
 export function HomePage({ data }: HomePageProps) {
+  const { t } = useT();
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeSubcategory, setActiveSubcategory] = useState<string>("All");
@@ -88,27 +90,20 @@ export function HomePage({ data }: HomePageProps) {
         >
           <div className="max-w-4xl">
             <p className="text-xs font-semibold uppercase tracking-[0.26em] text-black/42">
-              A Seoul guide, made by a local
+              {t("home.sectionSubtitle")}
             </p>
             <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">
-              The side of Seoul a local friend would actually show you
+              {t("home.headline")}
             </h2>
             <p className="mt-3 text-[15px] leading-7 text-black/65">
-              Not a generic city checklist, but a local&apos;s personal shortlist: places with warmth, beauty, good
-              taste, and that unmistakable Korean texture. The main spots keep your trip easy to plan, while the hidden
-              gems make it feel like a local friend is quietly letting you into her own favorite version of Seoul.
+              {t("home.introParagraph")}
             </p>
           </div>
           <ul className="mt-5 space-y-3 text-[15px] leading-7 text-black/62">
-            <li>
-              • {data.mainSpots.length} main spots for broad coverage across Seoul food, cafe, and bar essentials.
-            </li>
-            <li>
-              • {data.hiddenGems.length} hidden gems for places that feel quieter, more Korean, and less obvious to
-              foreign visitors.
-            </li>
-            <li>• {data.neighborhoods.length} neighborhoods represented, so routes can stay compact and local.</li>
-            <li>• Map exploration still sits below when a quick geographic sense-check is more useful than the list.</li>
+            <li>• {t("home.mainSpotsCount", { count: data.mainSpots.length })}</li>
+            <li>• {t("home.hiddenGemsCount", { count: data.hiddenGems.length })}</li>
+            <li>• {t("home.neighborhoodsCount", { count: data.neighborhoods.length })}</li>
+            <li>• {t("home.mapNote")}</li>
           </ul>
         </motion.div>
       </section>
@@ -121,12 +116,10 @@ export function HomePage({ data }: HomePageProps) {
 
       <section className="px-4 pt-6 sm:px-6">
         <div className="mx-auto max-w-5xl rounded-[30px] border border-black/10 bg-[#FFF7F0] p-5 shadow-float">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">Hidden gems</p>
-          <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">The more Korean, less obvious layer</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">{t("home.hiddenGems")}</p>
+          <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">{t("home.hiddenGemsHeadline")}</h2>
           <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/65">
-            These eight are the ones that shift the app from “good Seoul recommendations” to “this was clearly made by
-            someone local.” Private hanok dining, certified traditional confectionery, mountain views, and tea spaces
-            that do not read like default tourist picks.
+            {t("home.hiddenGemsDescription")}
           </p>
         </div>
       </section>
@@ -143,14 +136,13 @@ export function HomePage({ data }: HomePageProps) {
         <div className="mx-auto max-w-5xl rounded-[30px] border border-black/10 bg-white/60 p-5 shadow-float backdrop-blur-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">Browse the full list</p>
-              <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">Filter by category and subcategory</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">{t("home.browseFullList")}</p>
+              <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">{t("home.filterHeadline")}</h2>
               <p className="mt-3 text-[15px] leading-7 text-black/65">
-                The shortlist is big enough now that food type matters more than one long feed. Use category first,
-                then narrow by subcategory when you want to compare similar places more quickly.
+                {t("home.filterDescription")}
               </p>
             </div>
-            <div className="text-sm text-black/55">{filteredSpots.length} spots visible</div>
+            <div className="text-sm text-black/55">{t("home.spotsVisible", { count: filteredSpots.length })}</div>
           </div>
           <div className="hide-scrollbar mt-5 flex gap-2 overflow-x-auto pb-1">
             {categories.map((name) => (
@@ -167,7 +159,7 @@ export function HomePage({ data }: HomePageProps) {
                     : "border-black/10 bg-white/80 text-black/60"
                 }`}
               >
-                {name}
+                {name === "All" ? t("home.all") : t(`cat.${name}`)}
               </button>
             ))}
           </div>
@@ -183,7 +175,7 @@ export function HomePage({ data }: HomePageProps) {
                     : "border-black/10 bg-white/80 text-black/60"
                 }`}
               >
-                {name}
+                {name === "All" ? t("home.all") : name}
               </button>
             ))}
           </div>
@@ -222,7 +214,7 @@ export function HomePage({ data }: HomePageProps) {
           <span aria-hidden="true" className="text-base leading-none">
             🗺️
           </span>
-          <span>View on Google Maps</span>
+          <span>{t("home.viewOnGoogleMaps")}</span>
         </a>
       ) : null}
     </main>

@@ -3,12 +3,16 @@
 import { motion } from "framer-motion";
 import React from "react";
 import type { ProfileBundle } from "@/types/content";
+import { useT } from "@/lib/i18n/context";
+import { LanguageSelector } from "@/components/language-selector";
 
 type HeroProps = {
   profile: ProfileBundle;
 };
 
 export function Hero({ profile }: HeroProps) {
+  const { t } = useT();
+
   return (
     <section className="section-shell relative px-4 pt-4 sm:px-6">
       <motion.div
@@ -19,8 +23,11 @@ export function Hero({ profile }: HeroProps) {
       >
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-black/50">
-            <span className="rounded-full bg-white/80 px-3 py-1">Local Seoul guide</span>
-            <span className="rounded-full bg-[#C3F4D6]/70 px-3 py-1">Mobile first</span>
+            <span className="rounded-full bg-white/80 px-3 py-1">{t("hero.badge")}</span>
+            <span className="rounded-full bg-[#C3F4D6]/70 px-3 py-1">{t("hero.mobileFirst")}</span>
+            <div className="ml-auto">
+              <LanguageSelector />
+            </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-stretch">
@@ -83,11 +90,11 @@ export function Hero({ profile }: HeroProps) {
               <div className="absolute inset-x-6 top-6 h-20 rounded-full bg-[#FFD8C7] blur-3xl" />
               <div className="relative min-h-[340px] rounded-[28px] bg-confetti-glow p-3 lg:h-full">
                 <div className="rounded-[24px] border border-black/10 bg-white/80 p-5 lg:flex lg:h-full lg:flex-col lg:justify-center">
-                  <p className="text-xs uppercase tracking-[0.22em] text-black/45">What this guide optimizes for</p>
+                  <p className="text-xs uppercase tracking-[0.22em] text-black/45">{t("hero.optimizesFor")}</p>
                   <ul className="mt-3 space-y-3 text-sm leading-7 text-black/70 lg:text-[15px]">
-                    <li>Places that feel recognizably Korean, not copy-paste tourist picks</li>
-                    <li>A better first Seoul trip for visitors who care about taste and atmosphere</li>
-                    <li>Enough hidden gems that the whole guide feels personally collected by {profile.curator.name}</li>
+                    <li>{t("hero.optimize1")}</li>
+                    <li>{t("hero.optimize2")}</li>
+                    <li>{t("hero.optimize3", { name: profile.curator.name })}</li>
                   </ul>
                 </div>
               </div>

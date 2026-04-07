@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
+import { LocaleProvider } from "@/lib/i18n/context";
+import { defaultLocale, locales, type Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/get-messages";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://triphero.club"),
@@ -35,14 +39,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("NEXT_LOCALE")?.value;
+  const locale: Locale = locales.includes(raw as Locale)
+    ? (raw as Locale)
+    : defaultLocale;
+  const messages = await getMessages(locale);
+
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang={locale}>
+      <body>
+        <LocaleProvider initialLocale={locale} initialMessages={messages}>
+          {children}
+        </LocaleProvider>
+      </body>
     </html>
   );
 }
