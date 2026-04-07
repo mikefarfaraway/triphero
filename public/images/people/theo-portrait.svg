@@ -1,0 +1,14 @@
+<svg width="720" height="720" viewBox="0 0 720 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="720" rx="40" fill="#F4FFF7"/>
+  <circle cx="116" cy="132" r="84" fill="#FFD8C7"/>
+  <circle cx="602" cy="616" r="104" fill="#B8E8C5"/>
+  <rect x="184" y="120" width="352" height="500" rx="176" fill="#4A7870"/>
+  <circle cx="362" cy="268" r="120" fill="#18212B"/>
+  <path d="M248 438C248 374.487 299.487 323 363 323V323C426.513 323 478 374.487 478 438V542C478 605.513 426.513 657 363 657V657C299.487 657 248 605.513 248 542V438Z" fill="#F5D3C4"/>
+  <circle cx="320" cy="465" r="11" fill="#18212B"/>
+  <circle cx="408" cy="465" r="11" fill="#18212B"/>
+  <path d="M327 540C348.667 556 379.333 556 401 540" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M284 425C296.667 415.667 313 411.667 333 413" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M391 413C411 411.667 427.333 415.667 440 425" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <text x="54" y="92" fill="#18212B" font-family="Avenir Next, sans-serif" font-size="32" letter-spacing="0.18em">THEO</text>
+</svg>

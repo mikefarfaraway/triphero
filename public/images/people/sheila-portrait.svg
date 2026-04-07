@@ -1,0 +1,14 @@
+<svg width="720" height="960" viewBox="0 0 720 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="960" rx="40" fill="#FFF1E8"/>
+  <circle cx="560" cy="168" r="108" fill="#FFD8C7"/>
+  <circle cx="164" cy="782" r="126" fill="#C3F4D6"/>
+  <rect x="188" y="114" width="340" height="702" rx="170" fill="#F5B8A0"/>
+  <circle cx="356" cy="304" r="116" fill="#18212B"/>
+  <path d="M240 466C240 398.621 294.621 344 362 344V344C429.379 344 484 398.621 484 466V638C484 705.379 429.379 760 362 760V760C294.621 760 240 705.379 240 638V466Z" fill="#FFE6DB"/>
+  <circle cx="316" cy="488" r="12" fill="#18212B"/>
+  <circle cx="408" cy="488" r="12" fill="#18212B"/>
+  <path d="M323 570C340.5 586.667 378.5 590 401 570" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M274 449C291.687 434.249 311.339 428.846 333 432" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M389 432C410.661 428.846 430.313 434.249 448 449" stroke="#18212B" stroke-width="10" stroke-linecap="round"/>
+  <text x="64" y="92" fill="#18212B" font-family="Avenir Next, sans-serif" font-size="34" letter-spacing="0.18em">SHEILA</text>
+</svg>
