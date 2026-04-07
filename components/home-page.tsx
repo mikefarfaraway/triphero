@@ -114,20 +114,8 @@ export function HomePage({ data }: HomePageProps) {
       </section>
 
       <section ref={mapSectionRef} className="px-4 pt-6 sm:px-6">
-        <div className="mx-auto max-w-5xl rounded-[30px] border border-black/10 bg-[#F6FBFF] p-5 shadow-float">
-          <div className="max-w-4xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">Map explorer</p>
-            <h2 className="display-font mt-2 text-4xl leading-none tracking-[-0.04em]">
-              See where the trip clusters geographically
-            </h2>
-            <p className="mt-3 text-[15px] leading-7 text-black/65">
-              This is the fastest way to sense whether a place sits in the right part of town, whether a route can
-              stay compact, and which hidden gems naturally belong in the same neighborhood plan.
-            </p>
-          </div>
-          <div className="mt-5">
-            <SpotMap spots={filteredSpots} />
-          </div>
+        <div className="mx-auto max-w-5xl">
+          <SpotMap spots={filteredSpots} />
         </div>
       </section>
 

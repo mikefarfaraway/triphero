@@ -16,33 +16,23 @@ export function SpotMap({ spots }: SpotMapProps) {
       href={MY_MAPS_PUBLIC_URL}
       target="_blank"
       rel="noreferrer"
-      className="block overflow-hidden rounded-[30px] border border-black/10 bg-[#FFFDF8] p-4 shadow-float transition-transform duration-200 hover:-translate-y-0.5"
+      className="block overflow-hidden rounded-[30px] border border-black/10 bg-[#FFFDF8] shadow-float transition-transform duration-200 hover:-translate-y-0.5"
     >
-      <div className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">
-          Mina&apos;s Seoul Map, as a quick preview
-        </p>
-        <p className="mt-2 text-lg font-semibold text-ink">A still poster for fast scanning on mobile</p>
-        <p className="mt-1 text-sm leading-6 text-black/60">
-          Tap once to open Mina&apos;s full Seoul map in a new tab when you want real zoom, pan, and saved-pin
-          behavior.
-        </p>
+      <div className="px-5 pt-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/42">Map</p>
+        <p className="mt-1 text-lg font-semibold text-ink">Explore all spots on Google Maps</p>
       </div>
-
-      <div className="relative mt-4 overflow-hidden rounded-[24px] border border-black/10 bg-[#F7F6F2]">
-        <div className="relative h-[420px]">
-          <img
-            src="/images/map/seoul-map-poster.png"
-            alt="Illustrated Seoul map poster preview"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/30 to-transparent" />
-          <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full border border-white/25 bg-white/18 px-4 py-2 text-sm font-medium text-white backdrop-blur-md md:bottom-5 md:right-5 md:px-5 md:py-3 md:text-base">
-            <span>Open Mina&apos;s map</span>
-            <span aria-hidden="true" className="text-base leading-none md:text-lg">
-              ↗
-            </span>
-          </div>
+      <div className="relative mt-3">
+        <img
+          src="/images/map/seoul-map-poster.png"
+          alt="Seoul map preview"
+          className="w-full"
+        />
+        <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-[#18212B] px-4 py-2 text-sm font-medium text-white shadow-lg md:bottom-5 md:right-5 md:px-5 md:py-3 md:text-base">
+          <span>Open in Google Maps</span>
+          <span aria-hidden="true" className="text-base leading-none md:text-lg">
+            ↗
+          </span>
         </div>
       </div>
     </a>
