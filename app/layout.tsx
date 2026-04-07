@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://theoandsheila.xyz"),
+  metadataBase: new URL("https://triphero.club"),
   title: "Mina's Seoul Guide — Hidden Gems from a Local Friend",
   description:
     "A local Korean's handpicked hidden gems and favorite spots. Your friend Mina's personal Seoul guide.",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mina's Seoul Guide — Hidden Gems from a Local Friend",
     description: "A local Korean's handpicked hidden gems and favorite spots. Your friend Mina's personal Seoul guide.",
-    url: "https://theoandsheila.xyz",
+    url: "https://triphero.club",
     siteName: "Mina's Seoul Edit",
     images: [
       {
