@@ -6,7 +6,7 @@ Local Buddy 가설 검증을 위한 서울 여행 가이드 웹앱.
 한국인 로컬 버디 "Mina"가 방한 외국인 친구들을 위해 엄선한 Hidden Gems을 소개한다.
 
 - **Product hypothesis**: 외국인 관광객이 한국인 Local Buddy의 큐레이션에 가치를 느끼는가?
-- **Domain**: 미정 (기존 theoandsheila.xyz → 새 도메인 필요)
+- **Domain**: https://triphero.club (Cloudflare DNS + Vercel)
 - **Repo**: https://github.com/mikefarfaraway/triphero
 
 ## Tech stack
@@ -29,28 +29,35 @@ npm run test:e2e     # Playwright E2E tests
 ## Architecture
 
 ```
-app/            → Next.js pages & API routes
+app/            → Next.js pages (dynamic [username] route, root redirect)
 components/     → Client components (Hero, HomePage, SpotCard, SpotDetailSheet, SpotMap, SpotVisual)
-data/           → Static data (profile.ts, spots.csv)
+data/
+  users/
+    registry.ts → Valid usernames (single source of truth)
+    mina/       → Mina's profile.ts + spots.csv
+    mike/       → Mike's profile.ts + spots.csv
 lib/            → Content processing & presentation helpers
 types/          → TypeScript type definitions
 scripts/        → Utility scripts (e.g. fetch-place-photos.ts)
 tests/          → Vitest unit tests
 e2e/            → Playwright E2E tests
-public/         → Static assets (images, favicon)
+public/         → Static assets (images, favicon, per-user map posters)
 ```
 
 ## Data flow
 
-`data/spots.csv` → `lib/content.ts` (parse, validate with Zod, infer vibeTags/bestTime/priceLevel) → API routes / page props → components
+`data/users/{username}/spots.csv` → `lib/content.ts` (parse, validate with Zod, infer vibeTags/bestTime/priceLevel, per-user caching) → page props via `getHomepageData(username)` → components
 
 ## Key conventions
 
-- 모든 spot 데이터는 `spots.csv`를 single source of truth로 사용
-- 프로필/브랜딩 정보는 `data/profile.ts`에서 관리
-- `localInsight` 필드: 각 장소에 대한 Mina의 로컬 인사이트 (CSV의 reason 컬럼)
-- `ProfileBundle.guest`는 optional — 현재 Mina(curator) 단일 프로필로 운영
+- 멀티유저 구조: `app/[username]/page.tsx` 동적 라우트, `data/users/registry.ts`에서 유효 유저 관리
+- 모든 spot 데이터는 유저별 `spots.csv`를 single source of truth로 사용
+- 프로필/브랜딩 정보는 유저별 `data/users/{username}/profile.ts`에서 관리
+- `localInsight` 필드: 각 장소에 대한 curator의 로컬 인사이트 (CSV의 reason 컬럼)
+- `ProfileBundle.guest`는 optional — 현재 curator 단일 프로필로 운영
+- 유저별 OG 태그, 파비콘, 트위터 카드 (`generateMetadata`에서 동적 생성)
 - 이미지가 없는 장소는 카테고리 기반 팔레트 그라디언트 폴백
+- `.next` 캐시가 자주 stale되므로, dev server 시작 전 `rm -rf .next` 필수
 
 ## Environment variables
 
